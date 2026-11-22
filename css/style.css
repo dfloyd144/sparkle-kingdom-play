@@ -1,0 +1,404 @@
+:root{
+  --plum:#6d4a92;
+  --pink:#ff7fb2;
+  --cream:#fff8f1;
+  --font:"Chalkboard SE","Comic Sans MS","Comic Neue","Baloo 2","Nunito","Trebuchet MS",system-ui,sans-serif;
+}
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent}
+html,body{margin:0;height:100%;overflow:hidden;background:#ffe3ef;
+  -webkit-user-select:none;user-select:none;-webkit-touch-callout:none;touch-action:none;
+  overscroll-behavior:none;font-family:var(--font)}
+body{background:linear-gradient(#cfe9ff,#ffe0ef 55%,#d6f5dd)}
+body[data-scene="bakery"]{background:linear-gradient(#e6fbf3,#ffe9d6)}
+body[data-scene="room"]{background:linear-gradient(#f6e6ff,#ffe8d8)}
+body[data-scene="dressup"]{background:linear-gradient(#ffe0ef,#f3e2ff)}
+body[data-scene="ball"]{background:linear-gradient(#3b2a6b,#c9a8f0)}
+#app{position:fixed;inset:0}
+#stage{position:absolute;inset:0;width:100%;height:100%;display:block;overflow:hidden}
+#stage text,#startArt text{font-family:var(--font);font-weight:700}
+
+/* ---------- HUD ---------- */
+#hud{position:absolute;inset:0;pointer-events:none}
+.hud-btn{pointer-events:auto;position:absolute;width:76px;height:76px;border-radius:50%;
+  border:4px solid #fff;background:radial-gradient(circle at 35% 30%,#fff,#ffd6ea 70%);
+  box-shadow:0 6px 0 #f3a9cc,0 10px 22px rgba(120,60,140,.25);padding:6px;cursor:pointer;
+  transition:transform .12s}
+.hud-btn:active{transform:scale(.9)}
+.hud-btn svg{width:100%;height:100%;display:block}
+#homeBtn{left:calc(14px + env(safe-area-inset-left));top:calc(14px + env(safe-area-inset-top))}
+#helpBtn{left:calc(100px + env(safe-area-inset-left));top:calc(14px + env(safe-area-inset-top))}
+body[data-scene="kingdom"] #homeBtn{display:none}
+body[data-scene="kingdom"] #helpBtn{left:calc(14px + env(safe-area-inset-left))}
+#musicBtn{right:calc(14px + env(safe-area-inset-right));top:calc(14px + env(safe-area-inset-top))}
+#musicBtn.off{opacity:.55;filter:grayscale(.7)}
+#starJar{position:absolute;right:calc(104px + env(safe-area-inset-right));top:calc(18px + env(safe-area-inset-top));
+  height:68px;min-width:118px;padding:0 18px 0 8px;border-radius:40px;background:rgba(255,255,255,.92);
+  border:4px solid #fff3b0;box-shadow:0 6px 0 #ffd77a,0 10px 22px rgba(120,60,140,.2);
+  display:flex;align-items:center;gap:6px;color:var(--plum);font-size:40px;font-weight:700}
+#starJar .jar-icon{width:52px;height:52px;display:block}
+#starJar.bump{animation:bump .5s}
+@keyframes bump{30%{transform:scale(1.25)}60%{transform:scale(.95)}}
+#grownBtn{width:44px;height:44px;right:calc(12px + env(safe-area-inset-right));bottom:calc(12px + env(safe-area-inset-bottom));
+  opacity:.45;box-shadow:none;background:#fff;border-width:2px;padding:2px}
+#grownBtn .ring{fill:none;stroke:#b48ad8;stroke-width:4;stroke-dasharray:107;stroke-dashoffset:107;transform:rotate(-90deg);transform-origin:20px 20px}
+#grownBtn.holding .ring{transition:stroke-dashoffset 2s linear;stroke-dashoffset:0}
+#grownBtn.holding{opacity:1}
+body[data-scene="start"] #hud{display:none}
+
+/* ---------- curtain ---------- */
+#curtain{position:absolute;inset:0;pointer-events:none;opacity:0;transition:opacity .35s;
+  background:radial-gradient(circle at 50% 50%,#fff 0,#ffe0f0 40%,#e9d8ff 100%)}
+#curtain.on{opacity:1;pointer-events:auto}
+
+/* ---------- start ---------- */
+#start{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:#ffe3ef}
+#start.gone{display:none}
+#startArt{position:absolute;inset:0;width:100%;height:100%}
+#playBtn{position:relative;margin-top:34vh;width:min(30vw,190px);height:min(30vw,190px);border-radius:50%;
+  border:8px solid #fff;background:radial-gradient(circle at 35% 30%,#fff3fa,#ff9cc8 75%);
+  box-shadow:0 10px 0 #e86fa6,0 18px 40px rgba(120,40,120,.35);cursor:pointer;animation:pulse 1.8s ease-in-out infinite;padding:0}
+#playBtn svg{width:100%;height:100%}
+@keyframes pulse{50%{transform:scale(1.07)}}
+
+/* ---------- parent ---------- */
+#parent{position:absolute;inset:0;background:rgba(80,40,110,.45);display:flex;align-items:center;justify-content:center;touch-action:auto}
+#parent.hidden{display:none}
+#parent .panel{background:#fff;border-radius:24px;padding:24px 28px;width:min(92vw,440px);color:#4a3366;
+  font-family:system-ui,-apple-system,Segoe UI,sans-serif;box-shadow:0 20px 60px rgba(0,0,0,.25);-webkit-user-select:text;user-select:text}
+#parent h2{margin:0 0 14px;font-size:22px}
+#parent label{display:block;margin:12px 0;font-size:16px}
+#parent label input:not([type]){display:block;width:100%;margin-top:4px;font-size:18px;padding:8px 10px;border:2px solid #e3d3f5;border-radius:10px}
+#parent .pnames{margin:12px 0;font-size:16px}
+#parent #pNames{display:grid;grid-template-columns:1fr 1fr;gap:6px 10px;margin-top:6px}
+#parent .pn{display:flex;align-items:center;gap:6px;margin:0}
+#parent .pn svg{flex:none;width:40px;height:40px}
+#parent .pn input{min-width:0;width:100%;font-size:16px;padding:6px 8px;border:2px solid #e3d3f5;border-radius:10px}
+#parent label.row{display:flex;gap:10px;align-items:center}
+#parent label.row input{width:22px;height:22px}
+#parent .tip{font-size:13px;color:#7b6893;margin:14px 0}
+#parent .buttons{display:flex;justify-content:space-between;gap:10px}
+#parent button{font-size:16px;padding:10px 18px;border-radius:12px;border:0;cursor:pointer}
+#parent .danger{background:#fde4ea;color:#b03358}
+#parent .ok{background:#8f63d6;color:#fff}
+
+/* ---------- SVG interaction ---------- */
+.tappable{cursor:pointer}
+.btn .inner{transition:transform .12s ease-out}
+.btn:active .inner,.btn.pressed .inner{transform:scale(.88)}
+@media (hover:hover){.btn:hover .inner{transform:scale(1.06)}}
+.btn.sel .ring{stroke:#ff6fae;stroke-width:7}
+.btn.locked{opacity:.55}
+
+.bob{animation:bob 2.8s ease-in-out infinite}
+@keyframes bob{50%{transform:translateY(-10px)}}
+.float{animation:floaty 5s ease-in-out infinite}
+@keyframes floaty{50%{transform:translateY(-6px)}}
+.drift{animation:drift 60s linear infinite}
+@keyframes drift{from{transform:translateX(-200px)}to{transform:translateX(1500px)}}
+.flag{animation:flag 1.6s ease-in-out infinite;transform-box:fill-box;transform-origin:0 50%}
+@keyframes flag{50%{transform:skewY(8deg) scaleX(.9)}}
+.twinkle{animation:twinkle 2.2s ease-in-out infinite}
+@keyframes twinkle{50%{opacity:.25}}
+.shimmer{animation:shimmer 3s ease-in-out infinite}
+@keyframes shimmer{0%,100%{opacity:.15;transform:translateX(-10px)}50%{opacity:.85;transform:translateX(10px)}}
+.sway{animation:sway 3s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 100%}
+@keyframes sway{50%{transform:rotate(4deg)}0%,100%{transform:rotate(-4deg)}}
+.spin-slow{animation:spin 18s linear infinite;transform-box:fill-box;transform-origin:center}
+@keyframes spin{to{transform:rotate(360deg)}}
+.swing{animation:swing 4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+@keyframes swing{50%{transform:rotate(3deg)}0%,100%{transform:rotate(-3deg)}}
+.flutter{animation:flutter .5s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 50%}
+@keyframes flutter{50%{transform:scaleX(.35)}}
+.glowpulse{animation:glowpulse 2.4s ease-in-out infinite}
+@keyframes glowpulse{50%{opacity:.55}}
+
+/* ---------- characters ---------- */
+.anim{animation:breathe 3.2s ease-in-out infinite}
+@keyframes breathe{0%,100%{transform:scale(1,1)}50%{transform:scale(1.015,.988)}}
+.anim.walk{animation:walkbob .44s ease-in-out infinite}
+@keyframes walkbob{0%,50%,100%{transform:translateY(0) rotate(0)}25%{transform:translateY(-8px) rotate(-3deg)}75%{transform:translateY(-8px) rotate(3deg)}}
+.anim.a-jump{animation:jump .7s ease-out}
+@keyframes jump{0%{transform:scale(1.1,.88)}25%{transform:translateY(-70px) scale(.94,1.07)}50%{transform:translateY(-80px)}80%{transform:translateY(0) scale(1.08,.92)}100%{transform:none}}
+.anim.a-twirl{animation:twirl .9s ease-in-out}
+@keyframes twirl{0%{transform:scaleX(1)}25%{transform:scaleX(-1) translateY(-10px)}50%{transform:scaleX(1) translateY(-14px)}75%{transform:scaleX(-1) translateY(-10px)}100%{transform:scaleX(1)}}
+.anim.a-bow{animation:curtsy 1.1s ease-in-out}
+@keyframes curtsy{0%,100%{transform:none}40%,60%{transform:scale(1.05,.86) rotate(-4deg)}}
+.anim.a-dance{animation:dance 1.2s ease-in-out}
+@keyframes dance{0%,100%{transform:none}20%{transform:rotate(-10deg) translateY(-12px)}40%{transform:rotate(10deg)}60%{transform:rotate(-10deg) translateY(-12px)}80%{transform:rotate(8deg)}}
+.anim.a-wiggle{animation:wiggle .6s ease-in-out}
+@keyframes wiggle{0%,100%{transform:none}25%{transform:rotate(-6deg)}75%{transform:rotate(6deg)}}
+.anim.a-hop{animation:hop .45s ease-out}
+@keyframes hop{0%,100%{transform:none}40%{transform:translateY(-26px) scale(.97,1.04)}}
+.anim.a-wave{animation:hop .45s ease-out 2}
+.anim.a-shake{animation:shake .7s ease-in-out}
+@keyframes shake{0%,100%{transform:none}15%,45%,75%{transform:rotate(-4deg) translateX(-6px)}30%,60%,90%{transform:rotate(4deg) translateX(6px)}}
+.anim.a-sit{animation:none}
+
+.eyes{animation:blink 5s infinite;transform-box:fill-box;transform-origin:center}
+@keyframes blink{0%,93%,100%{transform:scaleY(1)}96%{transform:scaleY(.08)}}
+.eyes-happy,.mouth-open{display:none}
+.happy .eyes,.happy .mouth{display:none}
+.happy .eyes-happy,.happy .mouth-open{display:inline}
+
+/* fairy wings */
+.wings{animation:wings 1.4s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 60%}
+@keyframes wings{50%{transform:scaleX(.88)}}
+
+/* unicorn */
+.uni .tail{transform-origin:-96px -158px;animation:swish 2.6s ease-in-out infinite}
+@keyframes swish{0%,100%{transform:rotate(-6deg)}50%{transform:rotate(7deg)}}
+.uni .head{transform-origin:96px -200px;transition:transform .3s}
+.uni.eat .head{animation:nod .42s ease-in-out 3}
+@keyframes nod{50%{transform:rotate(14deg)}}
+.uni.trot .leg{animation:trot .36s ease-in-out infinite;transform-box:fill-box;transform-origin:50% 0}
+.uni.trot .leg.b{animation-delay:-.18s}
+@keyframes trot{0%,100%{transform:rotate(16deg)}50%{transform:rotate(-16deg)}}
+.uni .uwing{animation:uwing 1.8s ease-in-out infinite;transform-origin:-10px -175px}
+.uni.fly .uwing{animation-duration:.45s}
+@keyframes uwing{50%{transform:rotate(-14deg)}}
+.uni .mane-lock{transition:fill .5s}
+.mud circle{transition:opacity .4s,transform .4s}
+.tangles{transition:opacity .6s}
+
+/* word popup letters */
+.wletter{transform-box:fill-box;transform-origin:50% 80%;animation:letterpop .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes letterpop{0%{transform:scale(0) translateY(20px)}100%{transform:none}}
+.pop-in{transform-box:fill-box;transform-origin:center;animation:popin .45s cubic-bezier(.3,1.6,.5,1) both}
+@keyframes popin{0%{transform:scale(0)}100%{transform:scale(1)}}
+.grow-up{transform-box:fill-box;transform-origin:50% 100%;animation:growup .8s cubic-bezier(.3,1.5,.5,1) both}
+@keyframes growup{0%{transform:scale(.05)}100%{transform:scale(1)}}
+.ghost{opacity:.5}
+.pop{transform-box:fill-box;transform-origin:center;animation:popit .6s ease-out}
+@keyframes popit{30%{transform:scale(1.18)}60%{transform:scale(.94)}}
+.shake{transform-box:fill-box;transform-origin:50% 100%;animation:treeshake .7s ease-in-out}
+@keyframes treeshake{20%,60%{transform:rotate(-3deg)}40%,80%{transform:rotate(3deg)}}
+.squish{transform-box:fill-box;transform-origin:50% 100%;animation:squish .5s ease-out}
+@keyframes squish{30%{transform:scale(1.15,.85)}60%{transform:scale(.95,1.06)}}
+
+/* compact HUD on short screens (phones in landscape) */
+@media (max-height:520px){
+  .hud-btn{width:54px;height:54px;border-width:3px;box-shadow:0 4px 0 #f3a9cc,0 6px 14px rgba(120,60,140,.25)}
+  #helpBtn{left:calc(76px + env(safe-area-inset-left))}
+  #starJar{height:50px;min-width:88px;font-size:28px;right:calc(78px + env(safe-area-inset-right));top:calc(16px + env(safe-area-inset-top))}
+  #starJar .jar-icon{width:38px;height:38px}
+}
+
+/* ===== v2: bigger HUD, missions, dragging ===== */
+.hud-btn{width:96px;height:96px;padding:8px}
+#homeBtn{left:calc(14px + env(safe-area-inset-left))}
+#helpBtn{left:calc(122px + env(safe-area-inset-left))}
+#missionBtn{left:calc(230px + env(safe-area-inset-left));top:calc(14px + env(safe-area-inset-top));
+  background:radial-gradient(circle at 35% 30%,#fffbe6,#ffe08a 75%);box-shadow:0 6px 0 #e6b84a,0 10px 22px rgba(120,60,140,.25)}
+body[data-scene="kingdom"] #missionBtn{left:calc(122px + env(safe-area-inset-left))}
+#missionBtn.bump{animation:bump .6s}
+#missionBtn .mbadge{position:absolute;right:-8px;bottom:-6px;background:#ff7fb2;color:#fff;border:3px solid #fff;border-radius:20px;
+  font:700 18px var(--font);padding:2px 8px;line-height:1.2}
+#starJar{height:84px;min-width:140px;font-size:50px;right:calc(124px + env(safe-area-inset-right));top:calc(18px + env(safe-area-inset-top))}
+#starJar .jar-icon{width:64px;height:64px}
+#grownBtn{width:44px;height:44px;padding:2px}
+
+#missionCard{position:absolute;inset:0;background:rgba(80,40,110,.35);display:flex;align-items:center;justify-content:center;z-index:5}
+#missionCard.hidden{display:none}
+.mc-panel{position:relative;background:#fff;border:8px solid #ffd1e8;border-radius:44px;padding:22px 34px 26px;width:min(86vw,560px);
+  text-align:center;box-shadow:0 20px 60px rgba(80,40,110,.35);animation:popcard .45s cubic-bezier(.3,1.5,.5,1)}
+@keyframes popcard{0%{transform:scale(.4)}100%{transform:scale(1)}}
+.mc-owl{position:absolute;left:-46px;top:-56px;width:130px;height:130px}
+.mc-owl svg,.mc-title svg,.mc-pic svg,.mc-btns svg,.mc-medals svg{width:100%;height:100%;display:block}
+.mc-title{display:flex;align-items:center;justify-content:center;gap:10px;font:700 40px var(--font);color:#6d4a92}
+.mc-title svg{width:54px;height:54px}
+.mc-pic{width:min(40vw,210px);height:min(40vw,210px);margin:4px auto;background:radial-gradient(circle,#fff6fb,#ffe6f3);border-radius:50%}
+.mc-word{font:700 64px var(--font);color:#6d4a92;line-height:1.1}
+.mc-word .first,.mc-title .first{color:#ff5fa2}
+.mc-dots{display:flex;justify-content:center;gap:12px;margin:10px 0 4px}
+.mc-dots i{width:30px;height:30px;border-radius:50%;background:#f0e6fa;border:4px solid #e3d3f5}
+.mc-dots i.on{background:#ffd166;border-color:#f0a930}
+.mc-btns{display:flex;justify-content:center;gap:22px;margin-top:14px}
+.mc-btns button{width:104px;height:104px;border-radius:50%;border:6px solid #fff;padding:16px;cursor:pointer;
+  background:radial-gradient(circle at 35% 30%,#fff,#ffd3ea 75%);box-shadow:0 7px 0 #e9a6cf}
+.mc-btns .mc-go{background:radial-gradient(circle at 35% 30%,#c9f7dd,#5fc48a 80%);box-shadow:0 7px 0 #3fa06a}
+.mc-btns .mc-close{background:radial-gradient(circle at 35% 30%,#fff,#e6dcf8 75%);box-shadow:0 7px 0 #c8b6ea}
+.mc-btns .mc-next{background:radial-gradient(circle at 35% 30%,#fffbe6,#ffe08a 75%);box-shadow:0 7px 0 #e6b84a}
+.mc-panel.done .mc-btns .mc-close{background:radial-gradient(circle at 35% 30%,#c9f7dd,#5fc48a 80%);box-shadow:0 7px 0 #3fa06a}
+.mc-btns button:active{transform:scale(.9)}
+.mc-medals{display:flex;justify-content:center;flex-wrap:wrap;gap:4px;margin-top:14px;font:700 24px var(--font);color:#c08a2e;align-items:center}
+.mc-medals svg{width:38px;height:38px}
+
+.actor.held .anim{animation:held .5s ease-in-out infinite}
+@keyframes held{0%,100%{transform:translateY(-14px) rotate(-6deg)}50%{transform:translateY(-22px) rotate(6deg)}}
+.actor{cursor:grab}
+
+@media (max-height:620px){
+  .hud-btn{width:62px;height:62px;padding:5px;border-width:3px}
+  #helpBtn{left:calc(84px + env(safe-area-inset-left))}
+  #missionBtn{left:calc(154px + env(safe-area-inset-left))}
+  body[data-scene="kingdom"] #missionBtn{left:calc(84px + env(safe-area-inset-left))}
+  #starJar{height:56px;min-width:96px;font-size:32px;right:calc(86px + env(safe-area-inset-right));top:calc(16px + env(safe-area-inset-top))}
+  #starJar .jar-icon{width:42px;height:42px}
+  .mc-panel{padding:12px 20px 14px;border-width:6px}
+  .mc-owl{width:90px;height:90px;left:-30px;top:-36px}
+  .mc-title{font-size:28px}.mc-title svg{width:36px;height:36px}
+  .mc-pic{width:120px;height:120px}
+  .mc-word{font-size:42px}
+  .mc-btns button{width:74px;height:74px;padding:10px}
+  .mc-dots i{width:22px;height:22px}
+  .mc-medals svg{width:26px;height:26px}
+}
+
+/* ===== v4: HUD scales with the screen; side columns on wide phones; rotate prompt ===== */
+:root{--hb:clamp(46px,12.5vmin,96px);--hg:10px}
+.hud-btn{width:var(--hb);height:var(--hb);padding:calc(var(--hb)*.09);border-width:clamp(3px,.6vmin,5px)}
+#homeBtn{left:calc(var(--hg) + env(safe-area-inset-left));top:calc(var(--hg) + env(safe-area-inset-top))}
+#helpBtn{left:calc(var(--hg)*2 + var(--hb) + env(safe-area-inset-left));top:calc(var(--hg) + env(safe-area-inset-top))}
+#missionBtn{left:calc(var(--hg)*3 + var(--hb)*2 + env(safe-area-inset-left));top:calc(var(--hg) + env(safe-area-inset-top))}
+body[data-scene="kingdom"] #helpBtn{left:calc(var(--hg) + env(safe-area-inset-left))}
+body[data-scene="kingdom"] #missionBtn{left:calc(var(--hg)*2 + var(--hb) + env(safe-area-inset-left))}
+#musicBtn{right:calc(var(--hg) + env(safe-area-inset-right));top:calc(var(--hg) + env(safe-area-inset-top))}
+#starJar{height:calc(var(--hb)*.86);min-width:calc(var(--hb)*1.45);font-size:calc(var(--hb)*.5);padding:0 calc(var(--hb)*.18) 0 calc(var(--hb)*.08);
+  right:calc(var(--hg)*2 + var(--hb) + env(safe-area-inset-right));top:calc(var(--hg) + var(--hb)*.07 + env(safe-area-inset-top))}
+#starJar .jar-icon{width:calc(var(--hb)*.66);height:calc(var(--hb)*.66)}
+#missionBtn .mbadge{font-size:calc(var(--hb)*.2)}
+
+/* wide phones: stack the buttons in the empty side margins so they never cover the scene */
+body.wide{--hb:clamp(42px,14vmin,92px)}
+body.wide #homeBtn,body.wide #helpBtn,body.wide #missionBtn{left:calc(var(--hg) + env(safe-area-inset-left))}
+body.wide #helpBtn,body.wide[data-scene="kingdom"] #missionBtn{top:calc(var(--hg)*2 + var(--hb) + env(safe-area-inset-top))}
+body.wide #missionBtn{top:calc(var(--hg)*3 + var(--hb)*2 + env(safe-area-inset-top))}
+body.wide[data-scene="kingdom"] #helpBtn{top:calc(var(--hg) + env(safe-area-inset-top))}
+body.wide #starJar{right:calc(var(--hg) + env(safe-area-inset-right));top:calc(var(--hg)*2 + var(--hb) + env(safe-area-inset-top));
+  min-width:0;width:var(--hb);height:auto;padding:6px 0;flex-direction:column;gap:0;font-size:calc(var(--hb)*.36);border-radius:calc(var(--hb)*.5)}
+
+/* phones held upright: ask to turn sideways */
+#rotate{display:none}
+@media (orientation:portrait) and (max-width:620px){
+  #rotate{display:flex;position:fixed;inset:0;z-index:20;flex-direction:column;align-items:center;justify-content:center;gap:18px;
+    background:linear-gradient(#ffe0ef,#e9dcff);color:#6d4a92;font:700 26px var(--font);text-align:center;padding:30px}
+  #rotate svg{width:60vw;max-width:260px;height:auto}
+  #rotate .ph{transform-origin:100px 100px;animation:turnphone 2.4s ease-in-out infinite}
+}
+@keyframes turnphone{0%,25%{transform:rotate(0)}55%,100%{transform:rotate(-90deg)}}
+
+/* keep the whole game clear of an app's own top/bottom bars (e.g. when shown inside the Claude app) */
+#app{top:env(safe-area-inset-top,0px);bottom:env(safe-area-inset-bottom,0px);left:env(safe-area-inset-left,0px);right:env(safe-area-inset-right,0px)}
+#parent .panel{max-height:92vh;overflow-y:auto;-webkit-overflow-scrolling:touch}
+#parent select{display:block;width:100%;margin-top:4px;font-size:16px;padding:8px;border:2px solid #e3d3f5;border-radius:10px;background:#fff;color:#4a3366}
+#parent input[type=range]{display:block;width:100%;margin-top:6px;accent-color:#8f63d6}
+#parent #voiceTest{margin:4px 0 2px}
+
+/* ===== v5 layout: the game never sits under the buttons; upright phones can play too ===== */
+/* #app is already inset by the notch / home-bar safe areas, so buttons only add their own gap */
+#homeBtn{left:var(--hg);top:var(--hg)}
+#helpBtn{left:calc(var(--hg)*2 + var(--hb));top:var(--hg)}
+#missionBtn{left:calc(var(--hg)*3 + var(--hb)*2);top:var(--hg)}
+body[data-scene="kingdom"] #helpBtn{left:var(--hg)}
+body[data-scene="kingdom"] #missionBtn{left:calc(var(--hg)*2 + var(--hb))}
+#musicBtn{right:var(--hg);top:var(--hg)}
+#starJar{right:calc(var(--hg)*2 + var(--hb));top:calc(var(--hg) + var(--hb)*.07)}
+#grownBtn{right:var(--hg);bottom:var(--hg)}
+/* phones sideways: buttons in side columns, game between them */
+body.wide #homeBtn,body.wide #helpBtn,body.wide #missionBtn{left:var(--hg)}
+body.wide #helpBtn,body.wide[data-scene="kingdom"] #missionBtn{top:calc(var(--hg)*2 + var(--hb))}
+body.wide #missionBtn{top:calc(var(--hg)*3 + var(--hb)*2)}
+body.wide[data-scene="kingdom"] #helpBtn{top:var(--hg)}
+body.wide #starJar{right:var(--hg);top:calc(var(--hg)*2 + var(--hb))}
+body.wide #stage{left:calc(var(--hb) + var(--hg)*2);right:calc(var(--hb) + var(--hg)*2);width:auto}
+body.wide #grownBtn{right:calc(var(--hg) + (var(--hb) - 44px) / 2)}
+/* phones upright: buttons in a row along the top, game below */
+body.tall{--hb:clamp(44px,12vmin,80px)}
+body.tall #stage{top:calc(var(--hb) + var(--hg)*2);height:calc(100% - var(--hb) - var(--hg)*2);bottom:auto}
+#rotate{display:none!important}
+
+/* sad faces (needs low / wrong order) */
+.mouth-sad,.sad-brows{display:none}
+.sad .mouth{display:none}
+.sad .mouth-sad,.sad .sad-brows{display:inline}
+.happy .mouth-sad,.happy .sad-brows{display:none}
+
+/* ===== needs (Sims-style) ===== */
+#needsBtn{left:calc(var(--hg)*4 + var(--hb)*3);top:var(--hg);background:radial-gradient(circle at 35% 30%,#fff,#d8f5e6 75%);box-shadow:0 6px 0 #9fd8b8,0 10px 22px rgba(120,60,140,.2)}
+body[data-scene="kingdom"] #needsBtn{left:calc(var(--hg)*3 + var(--hb)*2)}
+body.wide #needsBtn{left:var(--hg);top:calc(var(--hg)*4 + var(--hb)*3)}
+body.wide[data-scene="kingdom"] #needsBtn{top:calc(var(--hg)*3 + var(--hb)*2)}
+#needsBtn.low{animation:needpulse 1.4s ease-in-out infinite}
+#needsBtn.bump{animation:bump .6s}
+@keyframes needpulse{50%{transform:scale(1.1);box-shadow:0 6px 0 #ff9fb8,0 0 0 8px rgba(255,111,145,.25)}}
+#needsCard{position:absolute;inset:0;background:rgba(80,40,110,.35);display:flex;align-items:center;justify-content:center;z-index:5}
+#needsCard.hidden{display:none}
+.nd-panel{background:#fff;border:8px solid #c9f0dc;border-radius:40px;padding:14px 22px 20px;width:min(92vw,640px);max-height:94%;overflow:auto;box-shadow:0 20px 60px rgba(80,40,110,.3);animation:popcard .4s cubic-bezier(.3,1.5,.5,1)}
+.nd-head{display:flex;align-items:center;gap:10px;font:700 clamp(24px,5vmin,40px) var(--font);color:#6d4a92}
+.nd-head>svg{width:clamp(48px,10vmin,70px);height:clamp(48px,10vmin,70px)}
+.nd-head .nd-close{margin-left:auto;width:clamp(44px,9vmin,60px);height:clamp(44px,9vmin,60px);border-radius:50%;border:4px solid #fff;background:#efe6fb;padding:6px}
+.nd-head .nd-close svg{width:100%;height:100%}
+.nd-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:clamp(8px,2vmin,14px);margin-top:8px}
+.nd{border:4px solid #f0e6fa;border-radius:24px;background:#fffafc;padding:8px;display:flex;flex-direction:column;align-items:center;gap:4px;cursor:pointer}
+.nd:active{transform:scale(.94)}
+.nd svg{width:clamp(44px,11vmin,74px);height:clamp(44px,11vmin,74px)}
+.nd .nw{font:700 clamp(18px,4vmin,28px) var(--font);color:#6d4a92}.nd .nw b{color:#ff5fa2}
+.nd .bar{width:90%;height:clamp(10px,2vmin,16px);background:#efe6fb;border-radius:10px;overflow:hidden}
+.nd .bar i{display:block;height:100%;border-radius:10px}
+
+/* ===== star shop ===== */
+#shopCard{position:absolute;inset:0;background:rgba(80,40,110,.35);display:flex;align-items:center;justify-content:center;z-index:6}
+#shopCard.hidden{display:none}
+.sh-panel{background:#fff;border:8px solid #ffe08a;border-radius:40px;padding:16px 24px 20px;width:min(86vw,460px);max-height:94%;overflow:auto;text-align:center;box-shadow:0 20px 60px rgba(80,40,110,.3);animation:popcard .4s cubic-bezier(.3,1.5,.5,1)}
+.sh-panel.wide{width:min(94vw,760px)}
+.sh-panel svg{display:block;width:100%;height:100%}
+.sh-pic{width:clamp(90px,24vmin,160px);height:clamp(90px,24vmin,160px);margin:0 auto;background:radial-gradient(circle,#fff,#fff3cc);border-radius:50%}
+.sh-word{font:700 clamp(26px,6vmin,46px) var(--font);color:#6d4a92}.sh-word b{color:#ff5fa2}
+.sh-price,.sh-need{display:flex;align-items:center;justify-content:center;gap:6px;font:700 clamp(26px,6vmin,44px) var(--font);color:#c27a12}
+.sh-price svg,.sh-need svg{width:clamp(30px,7vmin,48px);height:clamp(30px,7vmin,48px)}
+.sh-need{color:#a48bc4;font-size:clamp(20px,4.5vmin,32px)}
+.sh-btns{display:flex;justify-content:center;gap:20px;margin-top:10px}
+.sh-btns button{width:clamp(64px,16vmin,100px);height:clamp(64px,16vmin,100px);border-radius:50%;border:5px solid #fff;padding:10px;cursor:pointer}
+.sh-yes{background:radial-gradient(circle at 35% 30%,#c9f7dd,#5fc48a 80%);box-shadow:0 6px 0 #3fa06a}
+.sh-learn{background:radial-gradient(circle at 35% 30%,#fffbe6,#ffe08a 75%);box-shadow:0 6px 0 #e6b84a}
+.sh-no{background:radial-gradient(circle at 35% 30%,#fff,#e6dcf8 75%);box-shadow:0 6px 0 #c8b6ea}
+.sh-head{display:flex;align-items:center;gap:8px;font:700 clamp(28px,6vmin,46px) var(--font);color:#6d4a92}
+.sh-head>svg{width:clamp(36px,8vmin,56px);height:clamp(36px,8vmin,56px)}
+.sh-head .sh-no{margin-left:auto;width:clamp(44px,10vmin,64px);height:clamp(44px,10vmin,64px);border-radius:50%;border:4px solid #fff;padding:8px}
+.sh-grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(clamp(80px,17vmin,120px),1fr));gap:10px;margin-top:10px}
+.sh-item{position:relative;aspect-ratio:1;border:4px solid #f5e9c6;border-radius:24px;background:#fffdf5;padding:8px;cursor:pointer}
+.sh-item.own{border-color:#c9f0dc;background:#f6fff9}
+.sh-item:active{transform:scale(.94)}
+.sh-tag{position:absolute;right:4px;bottom:4px;display:flex;align-items:center;gap:2px;background:#ffd166;border:3px solid #fff;border-radius:20px;padding:0 8px 0 4px;font:700 clamp(14px,3.4vmin,22px) var(--font);color:#6d4a92;height:clamp(24px,5vmin,34px)}
+.sh-tag svg{width:clamp(16px,3.6vmin,24px);height:clamp(16px,3.6vmin,24px)}
+.sh-item.own .sh-tag{background:#a6eec0}
+
+/* ===== start screen: choose your princess + first-time name ===== */
+#pickRow{position:absolute;left:0;right:0;bottom:calc(8px + env(safe-area-inset-bottom,0px));display:flex;justify-content:center;gap:clamp(4px,1.4vmin,12px);padding:0 10px}
+.pk{width:clamp(52px,12vmin,92px);border:4px solid #fff;border-radius:22px;background:rgba(255,255,255,.85);padding:2px 2px 4px;display:flex;flex-direction:column;align-items:center;cursor:pointer;box-shadow:0 4px 0 #f0c6dc}
+.pk svg{width:100%;height:auto;display:block}
+.pk span{font:700 clamp(11px,2.6vmin,17px) var(--font);color:#6d4a92;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;max-width:100%}
+.pk.on{border-color:#ff6fae;background:#fff4b8;transform:translateY(-6px);box-shadow:0 6px 0 #ff9cc8}
+#playBtn{margin-top:0;margin-bottom:clamp(60px,18vmin,140px)}
+#nameCard{position:absolute;inset:0;background:rgba(80,40,110,.4);display:flex;align-items:center;justify-content:center;z-index:9;touch-action:auto}
+#nameCard.hidden{display:none}
+.nm-panel{background:#fff;border:8px solid #ffd1e8;border-radius:36px;padding:16px 24px;width:min(90vw,420px);display:flex;flex-direction:column;align-items:center;gap:10px;-webkit-user-select:text;user-select:text}
+.nm-panel>svg{width:clamp(70px,18vmin,110px)}
+.nm-panel label{font:700 clamp(20px,4.5vmin,30px) var(--font);color:#6d4a92;text-align:center}
+.nm-panel input{font:700 clamp(22px,5vmin,32px) var(--font);color:#6d4a92;text-align:center;width:100%;padding:8px;border:4px solid #e3d3f5;border-radius:16px}
+#nmOk{width:clamp(60px,14vmin,84px);height:clamp(60px,14vmin,84px);border-radius:50%;border:5px solid #fff;padding:4px;background:#a6eec0;box-shadow:0 6px 0 #5fc48a}
+#nmOk svg{width:100%;height:100%}
+/* mission browsing + shop badge */
+.mc-arrow{position:absolute;top:50%;transform:translateY(-50%);width:clamp(44px,10vmin,64px);height:clamp(44px,10vmin,64px);border-radius:50%;border:4px solid #fff;background:radial-gradient(circle at 35% 30%,#fffbe6,#ffe08a 75%);box-shadow:0 5px 0 #e6b84a;font:700 clamp(30px,7vmin,46px)/1 var(--font);color:#8d62c2;padding:0 0 6px;cursor:pointer}
+.mc-arrow.l{left:-22px}.mc-arrow.r{right:-22px}
+.mc-other{font:700 22px var(--font);color:#a48bc4;margin:8px 0}
+#starJar{position:absolute}
+.jar-shop{position:absolute;right:-10px;bottom:-12px;width:calc(var(--hb)*.42);height:calc(var(--hb)*.42)}
+.jar-shop svg{width:100%;height:100%}
+#starJar{pointer-events:auto;cursor:pointer}
+/* overlays can scroll with a finger; shop items show their names */
+.sh-panel,.nd-panel,.mc-panel{touch-action:pan-y;-webkit-overflow-scrolling:touch}
+#shopCard,#needsCard,#missionCard{touch-action:pan-y}
+.sh-item{display:flex;flex-direction:column;align-items:center;justify-content:flex-start;aspect-ratio:auto;padding:6px 4px 30px}
+.sh-item svg{width:100%;height:auto;aspect-ratio:1}
+.sh-name{font:700 clamp(12px,2.8vmin,17px) var(--font);color:#6d4a92;line-height:1.1;text-align:center}
+.sh-food{border-color:#ffd1e8;background:#fff6fb}.sh-pet{border-color:#c9f0dc;background:#f6fff9}
+
+/* play-time sky meter: sits just under the star counter */
+#restMeter{position:absolute;pointer-events:none;right:calc(var(--hg)*2 + var(--hb)*.6);top:calc(var(--hg) + var(--hb)*1.22);width:calc(var(--hb)*2);height:calc(var(--hb)*.52)}
+#restMeter svg{width:100%;height:100%;display:block;filter:drop-shadow(0 2px 4px rgba(120,60,140,.2))}
+body.wide #restMeter{right:var(--hg);top:calc(var(--hg)*3 + var(--hb)*2.25);width:var(--hb);height:calc(var(--hb)*.26)}
+#restMeter.soon{animation:rmPulse 1.6s ease-in-out infinite}
+@keyframes rmPulse{0%,100%{transform:scale(1)}50%{transform:scale(1.12)}}
+#restMeter[hidden]{display:none}
+#playMinsRow{display:block;margin:6px 0}
